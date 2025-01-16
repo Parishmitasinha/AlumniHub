@@ -13,29 +13,21 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  // Form key for validation
   final _formKey = GlobalKey<FormState>();
 
-  // Firebase Authentication instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  // Function to handle login logic
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       try {
-        // Show a loading indicator
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Logging in...')),
         );
-
-        // Log in using Firebase Authentication
         UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
 
-        // On successful login, navigate to the home page or wherever necessary
-        Navigator.pushReplacementNamed(context, '/home'); // Replace with your home page route
+        Navigator.pushReplacementNamed(context, '/home'); 
 
       } on FirebaseAuthException catch (e) {
         String errorMessage;
@@ -54,11 +46,9 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // Function to handle forgot password logic
   Future<void> _forgotPassword() async {
     final TextEditingController resetEmailController = TextEditingController();
 
-    // Show a dialog to enter the email for password reset
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -75,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop(); 
               },
               child: const Text('Cancel'),
             ),
@@ -83,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: () async {
                 if (resetEmailController.text.isNotEmpty) {
                   await _sendPasswordResetEmail(resetEmailController.text.trim());
-                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop(); 
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Please enter your email')),
@@ -98,7 +88,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Function to send the password reset email
   Future<void> _sendPasswordResetEmail(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
@@ -119,7 +108,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // Function to navigate to the registration page
   void _navigateToRegisterPage() {
     Navigator.push(
       context,
@@ -130,10 +118,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEFEFEF), // Light background color
+      backgroundColor: const Color(0xFFEFEFEF),
       appBar: AppBar(
         title: const Text('Login'),
-        backgroundColor: const Color(0xFF0A2647), // Dark blue
+        backgroundColor: const Color(0xFF0A2647), 
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -143,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Email TextField
+         
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
@@ -161,8 +149,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
               ),
               const SizedBox(height: 20),
-
-              // Password TextField
               TextFormField(
                 controller: _passwordController,
                 decoration: const InputDecoration(
@@ -180,12 +166,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
               ),
               const SizedBox(height: 20),
-
-              // Login Button
               ElevatedButton(
-                onPressed: _login, // Trigger the login function
+                onPressed: _login, 
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0A2647), // Dark blue button color
+                  backgroundColor: const Color(0xFF0A2647),
                   padding: const EdgeInsets.symmetric(vertical: 15),
                 ),
                 child: const Text(
@@ -195,10 +179,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               const SizedBox(height: 20),
-
-              // Forgot Password Button
               TextButton(
-                onPressed: _forgotPassword, // Trigger the forgot password dialog
+                onPressed: _forgotPassword, 
                 child: const Text(
                   'Forgot Password?',
                   style: TextStyle(color: Colors.black54),
@@ -206,12 +188,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               const SizedBox(height: 10),
-
-              // Register Button
               ElevatedButton(
-                onPressed: _navigateToRegisterPage, // Navigate to Register Page
+                onPressed: _navigateToRegisterPage,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green, // Green for register button
+                  backgroundColor: Colors.green, 
                   padding: const EdgeInsets.symmetric(vertical: 15),
                 ),
                 child: const Text(
