@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'homepage.dart'; // Ensure HomePage exists
-import 'loginscreen.dart'; // Ensure LoginScreen exists
+import 'homepage.dart'; 
+import 'loginscreen.dart'; 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore package
-import 'package:fluttertoast/fluttertoast.dart'; // Import Toast package
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart'; 
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -26,11 +26,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // List of departments for the dropdown
-  List<String> departments = ["Computer Science", "Mechanical Engineering", "Electrical Engineering", "Civil Engineering"];
+  List<String> departments = ["CSE", "EEE", "CIVIL", "LAW","ENGLISH","PUBLIC HEALTH","ARCHITECTURE"];
   String? selectedDepartment;
-
-  // Method for registration
   void _register() async {
     if (_passwordController.text == _confirmPasswordController.text) {
       try {
@@ -40,15 +37,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           password: _passwordController.text,
         );
 
-        // Store user data in Firestore
         await _firestore.collection('users').doc(userCredential.user?.uid).set({
           'name': _nameController.text,
           'email': _emailController.text,
           'studentId': _studentIdController.text,
-          'department': selectedDepartment ?? 'Unknown', // Store selected department
+          'department': selectedDepartment ?? 'Unknown', 
         });
 
-        // Show success message
         Fluttertoast.showToast(
           msg: "User registered successfully",
           toastLength: Toast.LENGTH_SHORT,
@@ -57,17 +52,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           backgroundColor: Colors.green,
           textColor: Colors.white,
         );
-        
-        // Navigate to the next screen (HomePage)
+    
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage(userEmail: '',)), // Replace with your HomePage
+          MaterialPageRoute(builder: (context) => const HomePage(userEmail: '',)),
         );
       } catch (e) {
-        // Log the error
         print("Error during registration: $e");
 
-        // Show error message
         Fluttertoast.showToast(
           msg: "Registration error: $e",
           toastLength: Toast.LENGTH_SHORT,
@@ -99,27 +91,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            // Full Name Field
+           
             TextField(
               controller: _nameController,
               decoration: const InputDecoration(labelText: 'Full Name'),
             ),
-            
-            // Email Field
+  
             TextField(
               controller: _emailController,
               decoration: const InputDecoration(labelText: 'Email'),
               keyboardType: TextInputType.emailAddress,
             ),
-            
-            // Student ID Field
             TextField(
               controller: _studentIdController,
               decoration: const InputDecoration(labelText: 'Student ID'),
               keyboardType: TextInputType.number,
             ),
-            
-            // Department Dropdown
+        
             DropdownButtonFormField<String>(
               value: selectedDepartment,
               hint: const Text('Select Department'),
@@ -136,8 +124,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               }).toList(),
               decoration: const InputDecoration(labelText: 'Department'),
             ),
-            
-            // Password Field
+      
             TextField(
               controller: _passwordController,
               obscureText: _obscurePassword,
@@ -155,8 +142,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ),
             ),
-            
-            // Confirm Password Field
+       
             TextField(
               controller: _confirmPasswordController,
               obscureText: _obscureConfirmPassword,
@@ -175,20 +161,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
             ),
             
-            // Register Button
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _register,
               child: const Text('Register'),
             ),
             
-            // Already have an account? Login
+
             TextButton(
               onPressed: () {
                 // Navigate to LoginScreen
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()), // Replace with your LoginScreen
+                  MaterialPageRoute(builder: (context) => const LoginScreen()), 
                 );
               },
               child: const Text('Already have an account? Login'),
