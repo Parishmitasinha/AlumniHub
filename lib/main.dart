@@ -22,7 +22,7 @@ class AlumniHub extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      debugShowCheckedModeBanner: false,  // Hide debug banner
+      debugShowCheckedModeBanner: false, 
       home: const SplashScreen(),
     );
   }
@@ -45,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
 
     _animationController = AnimationController(
-      duration: const Duration(seconds: 2), // Sync this with timer if needed
+      duration: const Duration(seconds: 2), 
       vsync: this,
     );
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
