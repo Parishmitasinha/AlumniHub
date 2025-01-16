@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'loginscreen.dart'; // Ensure this file exists
-import 'registrationscreen.dart'; // Ensure this file exists
+import 'loginscreen.dart'; 
+import 'registrationscreen.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -28,24 +28,22 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Remove any actions or titles from AppBar
-        automaticallyImplyLeading: false,  // Prevent the back button
+        automaticallyImplyLeading: false,  
         toolbarHeight: 0,  // Set height to 0 to hide AppBar
-        backgroundColor: Colors.transparent,  // Make it transparent to blend with background
+        backgroundColor: Colors.transparent, 
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF172554), Color(0xFF1E3A8A)], // dark blue gradient
+            colors: [Color(0xFF172554), Color(0xFF1E3A8A)], 
           ),
         ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo Container
               Container(
                 width: 180,
                 height: 180,
@@ -79,8 +77,6 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-
-              // Main Title
               const Text(
                 'Alumni Hub',
                 style: TextStyle(
@@ -90,8 +86,6 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Account Section
               const Text(
                 "Don't Have an account?",
                 style: TextStyle(
@@ -100,14 +94,11 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Sign Up and Login Links
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextButton(
                     onPressed: () {
-                      // Navigate to Registration Screen
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) =>  const RegistrationScreen()),
@@ -131,7 +122,6 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      // Navigate to Login Screen
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const LoginScreen()),
