@@ -1,5 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'profilescreen.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -27,7 +28,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Page'),
-        backgroundColor: const Color(0xFF0A2647),
+        backgroundColor: const Color(0xFFF4EAEA),
         // Menu icon in AppBar
         leading: Builder(
           builder: (BuildContext context) {
@@ -50,11 +51,21 @@ class HomePage extends StatelessWidget {
                 color: Color(0xFF0A2647),
               ),
               child: const Text(
-                'Navigation Menu',
+                '',
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
             ),
-            // ListTile for Messages
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Home'),
+              onTap: () {
+                var userEmail;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage(userEmail: userEmail)),
+                );
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.message),
               title: const Text('Messages'),
@@ -76,7 +87,6 @@ class HomePage extends StatelessWidget {
                 );
               },
             ),
-            // ListTile for Posts
             ListTile(
               leading: const Icon(Icons.post_add),
               title: const Text('Posts'),
@@ -119,26 +129,6 @@ class MessagesScreen extends StatelessWidget {
     );
   }
 }
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Profile'),
-        backgroundColor: const Color(0xFF0A2647),
-      ),
-      body: const Center(
-        child: Text(
-          'Profile details will appear here',
-          style: TextStyle(fontSize: 18),
-        ),
-      ),
-    );
-  }
-}
-
 class PostsScreen extends StatelessWidget {
   const PostsScreen({super.key});
 
@@ -157,6 +147,4 @@ class PostsScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-
+} 

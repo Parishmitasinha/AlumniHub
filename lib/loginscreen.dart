@@ -30,7 +30,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage(userEmail: '',)),
+          MaterialPageRoute(builder: (context) => HomePage(userEmail: userCredential.user?.email ?? 'No Email'),
+          )
         );
 
 
