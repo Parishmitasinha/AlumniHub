@@ -28,7 +28,11 @@ class _LoginScreenState extends State<LoginScreen> {
           password: _passwordController.text.trim(),
         );
 
-        Navigator.pushReplacementNamed(context, '/home'); 
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage(userEmail: '',)),
+        );
+
 
       } on FirebaseAuthException catch (e) {
         String errorMessage;
@@ -66,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); 
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
@@ -74,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: () async {
                 if (resetEmailController.text.isNotEmpty) {
                   await _sendPasswordResetEmail(resetEmailController.text.trim());
-                  Navigator.of(context).pop(); 
+                  Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Please enter your email')),
@@ -122,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: const Color(0xFFEFEFEF),
       appBar: AppBar(
         title: const Text('Login'),
-        backgroundColor: const Color(0xFF0A2647), 
+        backgroundColor: const Color(0xFF0A2647),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -132,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-         
+
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
@@ -168,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _login, 
+                onPressed: _login,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0A2647),
                   padding: const EdgeInsets.symmetric(vertical: 15),
@@ -181,7 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 20),
               TextButton(
-                onPressed: _forgotPassword, 
+                onPressed: _forgotPassword,
                 child: const Text(
                   'Forgot Password?',
                   style: TextStyle(color: Colors.black54),
@@ -192,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ElevatedButton(
                 onPressed: _navigateToRegisterPage,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green, 
+                  backgroundColor: Colors.green,
                   padding: const EdgeInsets.symmetric(vertical: 15),
                 ),
                 child: const Text(
