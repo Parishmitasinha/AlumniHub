@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'profilescreen.dart';
 void main() {
@@ -19,10 +18,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 class HomePage extends StatelessWidget {
   const HomePage({super.key, required String userEmail});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,11 +43,11 @@ class HomePage extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Color(0xFF0A2647),
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Color(0xFF102925),
               ),
-              child: const Text(
+              child: Text(
                 '',
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
@@ -59,10 +56,9 @@ class HomePage extends StatelessWidget {
               leading: const Icon(Icons.home),
               title: const Text('Home'),
               onTap: () {
-                var userEmail;
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomePage(userEmail: userEmail)),
+                  MaterialPageRoute(builder: (context) => const HomePage(userEmail: '',),),
                 );
               },
             ),
@@ -83,7 +79,7 @@ class HomePage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                  MaterialPageRoute(builder: (context) => ProfileScreen()),
                 );
               },
             ),
@@ -129,6 +125,7 @@ class MessagesScreen extends StatelessWidget {
     );
   }
 }
+
 class PostsScreen extends StatelessWidget {
   const PostsScreen({super.key});
 
