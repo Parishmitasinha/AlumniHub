@@ -63,23 +63,23 @@ class HomePage extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.message),
-              title: const Text('Messages'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MessagesScreen()),
-                );
-              },
-            ),
-            // ListTile for My Profile
-            ListTile(
               leading: const Icon(Icons.person),
               title: const Text('My Profile'),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ProfileScreen()),
+                );
+              },
+            ),
+            // ListTile for My Profile
+            ListTile(
+              leading: const Icon(Icons.message),
+              title: const Text('Messages'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MessagesScreen()),
                 );
               },
             ),
@@ -98,7 +98,7 @@ class HomePage extends StatelessWidget {
       ),
       body: const Center(
         child: Text(
-          'Home Page Content',
+          ' ',
           style: TextStyle(fontSize: 20),
         ),
       ),
@@ -114,7 +114,7 @@ class MessagesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Messages'),
-        backgroundColor: const Color(0xFF0A2647),
+        backgroundColor: const Color(0xFFF1F4F6),
       ),
       body: const Center(
         child: Text(
@@ -134,7 +134,7 @@ class PostsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Posts'),
-        backgroundColor: const Color(0xFF0A2647),
+        backgroundColor: const Color(0xFFE6E7EF),
       ),
       body: const Center(
         child: Text(

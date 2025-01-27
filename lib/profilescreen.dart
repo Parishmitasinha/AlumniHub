@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -22,15 +21,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _nameController.text = name;
-    _emailController.text = email;
-    _bioController.text = bio;
+    _fetchProfileData();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    Firebase.initializeApp();
+  Future<void> _fetchProfileData() async {
+    try {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('Profile').doc('user-id').get();
+
+      if (userDoc.exists) {
+        setState(() {
+          name = userDoc['name'] ?? "Sinha";
+          email = userDoc['email'] ?? "sinha11@gmail.com";
+          bio = userDoc['bio'] ?? "  ";
+          imagePath = userDoc['profileImage'] != '' ? File(userDoc['profileImage']) : null;
+
+          _nameController.text = name;
+          _emailController.text = email;
+          _bioController.text = bio;
+        });
+      }
+    } catch (e) {
+      print("Error fetching profile data: $e");
+    }
   }
 
   Future<void> _pickImage() async {
@@ -90,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: CircleAvatar(
               radius: 60,
               backgroundImage: imagePath != null
-                  ? FileImage(imagePath!) // Correctly display the image after selecting
+                  ? FileImage(imagePath!)
                   : NetworkImage("https://www.example.com/profile-image.jpg") as ImageProvider,
               child: Icon(Icons.camera_alt, size: 30, color: Colors.white),
             ),

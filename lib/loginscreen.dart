@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: const Color(0xFFEFEFEF),
       appBar: AppBar(
         title: const Text('Login'),
-        backgroundColor: const Color(0xFF0A2647),
+        backgroundColor: const Color(0xFFD8DDE3),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
