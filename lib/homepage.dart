@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'profilescreen.dart';
+import 'postscreen.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -38,7 +39,6 @@ class HomePage extends StatelessWidget {
           },
         ),
       ),
-      // Drawer with navigation items
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -89,7 +89,7 @@ class HomePage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const PostsScreen()),
+                  MaterialPageRoute(builder: (context) => PostScreen()),
                 );
               },
             ),
@@ -126,22 +126,3 @@ class MessagesScreen extends StatelessWidget {
   }
 }
 
-class PostsScreen extends StatelessWidget {
-  const PostsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Posts'),
-        backgroundColor: const Color(0xFFE6E7EF),
-      ),
-      body: const Center(
-        child: Text(
-          'User posts will appear here',
-          style: TextStyle(fontSize: 18),
-        ),
-      ),
-    );
-  }
-} 

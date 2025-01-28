@@ -1,47 +1,44 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String name = "Sinha";
-  String email = "sinha11@gmail.com";
-  String bio = "  ";
-  File? imagePath;
+  File? _profileImage;
   final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
   final _bioController = TextEditingController();
+  final _experiencesController = TextEditingController();
   bool _isEditing = false;
 
   @override
   void initState() {
     super.initState();
-    _fetchProfileData();
+    _loadProfile();
   }
 
-  Future<void> _fetchProfileData() async {
-    try {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('Profile').doc('user-id').get();
 
-      if (userDoc.exists) {
+  Future<void> _loadProfile() async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId != null) {
+      final doc = await FirebaseFirestore.instance.collection('Profiles').doc(userId).get();
+      if (doc.exists) {
+        final data = doc.data();
+        _nameController.text = data?['name'] ?? '';
+        _bioController.text = data?['bio'] ?? '';
+        _experiencesController.text = data?['experiences'] ?? '';
         setState(() {
-          name = userDoc['name'] ?? "Sinha";
-          email = userDoc['email'] ?? "sinha11@gmail.com";
-          bio = userDoc['bio'] ?? "  ";
-          imagePath = userDoc['profileImage'] != '' ? File(userDoc['profileImage']) : null;
-
-          _nameController.text = name;
-          _emailController.text = email;
-          _bioController.text = bio;
+          _profileImage = File(data?['imagePath'] ?? '');
         });
       }
-    } catch (e) {
-      print("Error fetching profile data: $e");
     }
   }
 
@@ -51,88 +48,138 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (pickedFile != null) {
       setState(() {
-        imagePath = File(pickedFile.path);
+        _profileImage = File(pickedFile.path);
       });
+      _saveImageLocally(_profileImage!);
+    }
+  }
+
+  Future<void> _saveImageLocally(File image) async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final path = '${directory.path}/profile_image.jpg';
+      await image.copy(path);
+      print('Image saved at $path');
+    } catch (e) {
+      print('Error saving image: $e');
     }
   }
 
   Future<void> _saveProfile() async {
-    final userProfileData = {
-      'name': _nameController.text,
-      'email': _emailController.text,
-      'bio': _bioController.text,
-      'profileImage': imagePath != null ? imagePath!.path : '',
-    };
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    final name = _nameController.text;
+    final bio = _bioController.text;
+    final experiences = _experiencesController.text;
 
-    try {
-      await FirebaseFirestore.instance.collection('Profile').doc('user-id').set(userProfileData);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Profile updated successfully")),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to update profile: $e")),
-      );
+    if (userId != null && name.isNotEmpty) {
+      try {
+        await FirebaseFirestore.instance.collection('Profiles').doc(userId).set({
+          'name': name,
+          'bio': bio,
+          'experiences': experiences,
+          'imagePath': _profileImage?.path ?? '',
+          'updatedAt': Timestamp.now(),
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile saved successfully')),
+        );
+
+        setState(() {
+          _isEditing = false;
+        });
+      } catch (e) {
+        print('Error saving profile data: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error saving profile data')),
+        );
+      }
     }
   }
 
-  void _toggleEditing() {
-    setState(() {
-      _isEditing = !_isEditing;
-    });
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _bioController.dispose();
+    _experiencesController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-        actions: [
-          IconButton(
-            icon: Icon(_isEditing ? Icons.check : Icons.edit),
-            onPressed: _toggleEditing,
+      appBar: AppBar(title: const Text('Profile')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: _pickImage,
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.grey[300],
+                  child: _profileImage != null
+                      ? Image.file(
+                    _profileImage!,
+                    fit: BoxFit.cover,
+                  )
+                      : const Icon(Icons.camera_alt, size: 40, color: Colors.white),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: _pickImage,
+                child: const Text('Pick an Image'),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Name',
+                  border: OutlineInputBorder(),
+                ),
+                enabled: _isEditing,
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _bioController,
+                decoration: const InputDecoration(
+                  labelText: 'Bio',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
+                enabled: _isEditing,
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _experiencesController,
+                decoration: const InputDecoration(
+                  labelText: 'Experiences',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 5,
+                enabled: _isEditing,
+              ),
+              const SizedBox(height: 20),
+              if (_isEditing)
+                ElevatedButton(
+                  onPressed: _saveProfile,
+                  child: const Text('Save Profile'),
+                ),
+              if (!_isEditing)
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _isEditing = true;
+                    });
+                  },
+                  icon: const Icon(Icons.edit),
+                ),
+            ],
           ),
-        ],
-      ),
-      body: ListView(
-        padding: EdgeInsets.all(16),
-        children: [
-          GestureDetector(
-            onTap: _pickImage,
-            child: CircleAvatar(
-              radius: 60,
-              backgroundImage: imagePath != null
-                  ? FileImage(imagePath!)
-                  : NetworkImage("https://www.example.com/profile-image.jpg") as ImageProvider,
-              child: Icon(Icons.camera_alt, size: 30, color: Colors.white),
-            ),
-          ),
-          SizedBox(height: 24),
-          TextField(
-            controller: _nameController,
-            decoration: InputDecoration(labelText: "Name"),
-            enabled: _isEditing,
-          ),
-          SizedBox(height: 12),
-          TextField(
-            controller: _emailController,
-            decoration: InputDecoration(labelText: "Email"),
-            enabled: _isEditing,
-          ),
-          SizedBox(height: 12),
-          TextField(
-            controller: _bioController,
-            maxLines: 4,
-            decoration: InputDecoration(labelText: "Bio"),
-            enabled: _isEditing,
-          ),
-          SizedBox(height: 16),
-          if (_isEditing)
-            ElevatedButton(
-              onPressed: _saveProfile,
-              child: Text("Save Profile"),
-            ),
-        ],
+        ),
       ),
     );
   }
