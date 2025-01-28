@@ -1,5 +1,6 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:image_picker/image_picker.dart';
@@ -197,7 +198,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   XFile? _imageFile;
   final ImagePicker _picker = ImagePicker();
   final DatabaseReference _postsRef = FirebaseDatabase.instance.ref('posts');
-  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   Future<void> _pickImage() async {
     try {
@@ -212,6 +212,21 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       );
     }
   }
+  Future <String>_uploadImageToCloudinary(File imageFile)async{
+    const cloudinaryUrl="https://api.cloudinary.com/v1_1/djanecvfz/image/upload";
+    const uploadPreset= " ml_default";
+    final request = http.MultipartRequest("POST", Uri.parse(cloudinaryUrl))
+      ..fields['upload_preset'] = uploadPreset
+      ..files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+    final response = await request.send();
+    if (response.statusCode == 200){
+      final responseData = await response.stream.bytesToString();
+      final jsonResponse = jsonDecode(responseData);
+      return jsonResponse['secure_url'];
+    }else{
+      throw Exception('Failed to upload image to Cloudinary');
+    }
+  }
 
   Future<void> _submitPost() async {
     if (_formKey.currentState!.validate()) {
@@ -221,11 +236,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
         String? imageUrl;
         if (_imageFile != null) {
-          final ref = _storage
-              .ref()
-              .child('post_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
-          await ref.putFile(File(_imageFile!.path));
-          imageUrl = await ref.getDownloadURL();
+          imageUrl=await _uploadImageToCloudinary(File(_imageFile!.path));
         }
         final user = FirebaseAuth.instance.currentUser;
         if (user == null) throw Exception('User not logged in');
@@ -244,7 +255,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Post created successfully!')),
+          const SnackBar(content: Text('Post created successfully!')),
         );
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
