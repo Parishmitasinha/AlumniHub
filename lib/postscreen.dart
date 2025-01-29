@@ -214,7 +214,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
   Future <String>_uploadImageToCloudinary(File imageFile)async{
     const cloudinaryUrl="https://api.cloudinary.com/v1_1/djanecvfz/image/upload";
-    const uploadPreset= " ml_default";
+    const uploadPreset= "ml_default";
     final request = http.MultipartRequest("POST", Uri.parse(cloudinaryUrl))
       ..fields['upload_preset'] = uploadPreset
       ..files.add(await http.MultipartFile.fromPath('file', imageFile.path));

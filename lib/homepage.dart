@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'profilescreen.dart';
 import 'postscreen.dart';
@@ -21,6 +22,12 @@ class MyApp extends StatelessWidget {
 }
 class HomePage extends StatelessWidget {
   const HomePage({super.key, required String userEmail});
+
+  Stream<QuerySnapshot> _getPosts() {
+    return FirebaseFirestore.instance.collection('posts').orderBy(
+        'timestamp', descending: true).snapshots();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,7 +65,8 @@ class HomePage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HomePage(userEmail: '',),),
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(userEmail: '',),),
                 );
               },
             ),
@@ -96,11 +104,27 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      body: const Center(
-        child: Text(
-          ' ',
-          style: TextStyle(fontSize: 20),
-        ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _getPosts(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (!snapshot.hasData) {
+            return const Center(child: Text('No posts available'));
+          }
+          final posts = snapshot.data!.docs;
+          return ListView.builder(
+            itemCount: posts.length,
+            itemBuilder: (context, index) {
+              final post = posts[index].data() as Map<String, dynamic>;
+              return ListTile(
+                title: Text(post['content']),
+                subtitle: Text('Posted by:${post['userEmail']}'),
+              );
+            },
+          );
+        },
       ),
     );
   }
