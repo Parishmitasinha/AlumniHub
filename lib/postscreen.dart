@@ -240,6 +240,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         }
         final user = FirebaseAuth.instance.currentUser;
         if (user == null) throw Exception('User not logged in');
+        String userName = user.displayName ?? 'Anonymous';
 
         final newPost = Post(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -271,10 +272,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create Post"),
+        title: const Text("Create Post"),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
@@ -304,7 +305,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _isLoading ? null : _submitPost,
-                child: Text("Create Post"),
+                child: Text("Post"),
               ),
             ],
           ),

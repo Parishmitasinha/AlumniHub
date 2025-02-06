@@ -17,9 +17,34 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  String superAdminEmail = "admin22@gmail.com";
+  String superAdminPassword = "Admin23!%";
+
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       try {
+        if (_emailController.text.trim() == superAdminEmail &&
+            _passwordController.text.trim() == superAdminPassword) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Logging in as Super Admin...')),
+          );
+
+          UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
+          );
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(
+                userEmail: userCredential.user?.email ?? 'No Email',
+                isSuperAdmin: true,
+              ),
+            ),
+          );
+          return;
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Logging in...')),
         );
@@ -30,11 +55,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage(userEmail: userCredential.user?.email ?? 'No Email'),
-          )
+          MaterialPageRoute(
+            builder: (context) => HomePage(
+              userEmail: userCredential.user?.email ?? 'No Email',
+              isSuperAdmin: false,
+            ),
+          ),
         );
-
-
       } on FirebaseAuthException catch (e) {
         String errorMessage;
         if (e.code == 'user-not-found') {
@@ -124,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEFEFEF),
+      backgroundColor: const Color(0xFF2F598F),
       appBar: AppBar(
         title: const Text('Login'),
         backgroundColor: const Color(0xFFD8DDE3),
@@ -137,7 +164,6 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
@@ -183,7 +209,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
-
               const SizedBox(height: 20),
               TextButton(
                 onPressed: _forgotPassword,
@@ -192,7 +217,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextStyle(color: Colors.black54),
                 ),
               ),
-
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: _navigateToRegisterPage,

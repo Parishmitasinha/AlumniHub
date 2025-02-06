@@ -17,6 +17,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _nameController = TextEditingController();
   final _bioController = TextEditingController();
   final _experiencesController = TextEditingController();
+
+  // final _linkedinController=TextEditingController();
   bool _isEditing = false;
 
   @override
@@ -29,12 +31,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _loadProfile() async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId != null) {
-      final doc = await FirebaseFirestore.instance.collection('Profiles').doc(userId).get();
+      final doc = await FirebaseFirestore.instance.collection('Profiles').doc(
+          userId).get();
       if (doc.exists) {
         final data = doc.data();
         _nameController.text = data?['name'] ?? '';
         _bioController.text = data?['bio'] ?? '';
         _experiencesController.text = data?['experiences'] ?? '';
+        // _linkedinController.text=data?['linkedin'];
         setState(() {
           _profileImage = File(data?['imagePath'] ?? '');
         });
@@ -70,16 +74,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final name = _nameController.text;
     final bio = _bioController.text;
     final experiences = _experiencesController.text;
-
+    //final linkedin=_linkedinController.text;
     if (userId != null && name.isNotEmpty) {
       try {
-        await FirebaseFirestore.instance.collection('Profiles').doc(userId).set({
-          'name': name,
-          'bio': bio,
-          'experiences': experiences,
-          'imagePath': _profileImage?.path ?? '',
-          'updatedAt': Timestamp.now(),
-        });
+        await FirebaseFirestore.instance.collection('Profiles').doc(userId).set(
+            {
+              'name': name,
+              'bio': bio,
+              'experiences': experiences,
+              'imagePath': _profileImage?.path ?? '',
+              'updatedAt': Timestamp.now(),
+            });
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profile saved successfully')),
@@ -102,6 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _nameController.dispose();
     _bioController.dispose();
     _experiencesController.dispose();
+    // _linkedinController.dispose();
     super.dispose();
   }
 
@@ -125,7 +131,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _profileImage!,
                     fit: BoxFit.cover,
                   )
-                      : const Icon(Icons.camera_alt, size: 40, color: Colors.white),
+                      : const Icon(
+                      Icons.camera_alt, size: 40, color: Colors.white),
                 ),
               ),
               const SizedBox(height: 20),
@@ -162,6 +169,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 maxLines: 5,
                 enabled: _isEditing,
               ),
+              /* const SizedBox(height:20),
+              TextFormField(
+                controller: _linkedinController,
+                decoration: const InputDecoration(
+                  labelText:'Linkedin Profile Link',
+                  border:OutlineInputBorder(),
+                ),
+          enabled: _isEditing,
+              ),*/
               const SizedBox(height: 20),
               if (_isEditing)
                 ElevatedButton(
