@@ -126,6 +126,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       appBar: AppBar(
         title: const Text('Registration'),
       ),
+      backgroundColor: const Color.fromARGB(255, 166, 179, 192),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(

@@ -99,6 +99,22 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
+  Future<void> _deletePost(String postId) async {
+    try {
+      await _postsRef.child(postId).remove();
+      setState(() {
+        userPosts.removeWhere((post) => post.id == postId);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Post deleted successfully!')),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting post: $error')),
+      );
+    }
+  }
+
   Widget _buildEmptyState() {
     return const Center(
       child: Text("You haven't posted anything yet."),
@@ -151,6 +167,10 @@ class _PostScreenState extends State<PostScreen> {
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
+            ),
+            trailing: IconButton(
+              icon: Icon(Icons.delete, color: Colors.red),
+              onPressed: () => _deletePost(post.id),
             ),
           ),
         );
@@ -212,19 +232,21 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       );
     }
   }
-  Future <String>_uploadImageToCloudinary(File imageFile)async{
-    const cloudinaryUrl="https://api.cloudinary.com/v1_1/djanecvfz/image/upload";
-    const uploadPreset= "ml_default";
-    final request = http.MultipartRequest("POST", Uri.parse(cloudinaryUrl))
-      ..fields['upload_preset'] = uploadPreset
-      ..files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+
+  Future<String> _uploadImageToImgBB(File imageFile) async {
+    const imgBBUrl = "https://api.imgbb.com/1/upload";
+    const apiKey = "051fc3124a49620428487289bd593081";
+    final request = http.MultipartRequest("POST", Uri.parse(imgBBUrl))
+      ..fields['key'] = apiKey
+      ..files.add(await http.MultipartFile.fromPath('image', imageFile.path));
+
     final response = await request.send();
-    if (response.statusCode == 200){
+    if (response.statusCode == 200) {
       final responseData = await response.stream.bytesToString();
       final jsonResponse = jsonDecode(responseData);
-      return jsonResponse['secure_url'];
-    }else{
-      throw Exception('Failed to upload image to Cloudinary');
+      return jsonResponse['data']['url'];
+    } else {
+      throw Exception('Failed to upload image to ImgBB');
     }
   }
 
@@ -236,7 +258,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
         String? imageUrl;
         if (_imageFile != null) {
-          imageUrl=await _uploadImageToCloudinary(File(_imageFile!.path));
+          imageUrl = await _uploadImageToImgBB(File(_imageFile!.path));
         }
         final user = FirebaseAuth.instance.currentUser;
         if (user == null) throw Exception('User not logged in');
